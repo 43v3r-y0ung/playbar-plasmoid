@@ -160,6 +160,13 @@ Item {
     readonly property int defaultPixelSize: Math.round(Kirigami.Theme.defaultFont.pointSize * 4 / 3)
     readonly property int fontPixelSize: Math.max(7, Math.min(defaultPixelSize, Math.floor(lineSpace * 0.78)))
 
+    // Middle click anywhere toggles play / pause; other buttons pass through
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.MiddleButton
+        onClicked: view.backend.togglePlaying()
+    }
+
     Item {
         id: cover
         x: 0

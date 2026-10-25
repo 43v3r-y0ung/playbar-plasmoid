@@ -69,6 +69,8 @@ PlasmoidItem {
     readonly property real rate: player?.rate ?? 1
     readonly property real length: player?.length ?? 0 // microseconds
     readonly property bool canSeek: player?.canSeek ?? false
+    readonly property bool canPlay: player?.canPlay ?? false
+    readonly property bool canPause: player?.canPause ?? false
     // END model properties
 
     // Players only report position on seek / on request, so we extrapolate locally
@@ -87,6 +89,19 @@ PlasmoidItem {
         if (root.player && root.canSeek) {
             root.player.position = target;
             root.position = target;
+        }
+    }
+
+    function togglePlaying(): void {
+        if (!root.player) {
+            return;
+        }
+        if (root.isPlaying) {
+            if (root.canPause) {
+                root.player.Pause();
+            }
+        } else if (root.canPlay) {
+            root.player.Play();
         }
     }
 
@@ -165,6 +180,8 @@ PlasmoidItem {
         if (artist) lines.push(artist);
         if (album) lines.push(album);
         if (identity) lines.push(isPaused ? i18n("%1 (paused)", identity) : identity);
+        if (isPlaying && canPause) lines.push(i18n("Middle-click to pause"));
+        else if (isPaused && canPlay) lines.push(i18n("Middle-click to play"));
         return lines.join("\n");
     }
     toolTipTextFormat: Text.PlainText
