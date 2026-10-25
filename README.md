@@ -3,6 +3,8 @@
 Компактний віджет «зараз грає» для панелі KDE Plasma 6. Лише відображення,
 без кнопок керування і без спливного вікна.
 
+![Playbar на панелі](docs/screenshot.png)
+
 - обкладинка альбому (квадрат на висоту панелі)
 - назва треку і виконавець — два рядки або один рядок «Виконавець — Назва»;
   довгий текст плавно прокручується
@@ -30,6 +32,13 @@ kpackagetool6 -t Plasma/Applet -i .
 
 Далі: правий клік на панелі → «Додати віджети…» → знайдіть **Playbar** і
 перетягніть на панель.
+
+Або завантажте готовий `playbar.plasmoid` з
+[KDE Store](https://store.kde.org/) і встановіть його:
+
+```sh
+kpackagetool6 -t Plasma/Applet -i playbar.plasmoid
+```
 
 ### Оновлення
 
@@ -83,6 +92,14 @@ contents/ui/ScrollingText.qml   рядок із прокручуванням
 contents/ui/configGeneral.qml   сторінка «Загальне»
 ```
 
+## Збирання `.plasmoid`
+
+`.plasmoid` — це zip-архів пакета:
+
+```sh
+git archive --format=zip -o playbar.plasmoid HEAD metadata.json contents LICENSE
+```
+
 ## Ліцензія
 
-GPL-2.0-or-later
+GPL-2.0-or-later, див. [LICENSE](LICENSE).
