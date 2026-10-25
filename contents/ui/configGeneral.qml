@@ -24,8 +24,8 @@ KCM.SimpleKCM {
     property color cfg_textColorDefault
     property string cfg_preferredPlayer
     property string cfg_preferredPlayerDefault
-    property alias cfg_maximumWidth: widthSpin.value
-    property int cfg_maximumWidthDefault
+    property alias cfg_widgetWidth: widthSpin.value
+    property int cfg_widgetWidthDefault
     property alias cfg_hideWhenPaused: hideWhenPausedCheck.checked
     property bool cfg_hideWhenPausedDefault
 
@@ -165,7 +165,7 @@ KCM.SimpleKCM {
 
         QQC2.SpinBox {
             id: widthSpin
-            Kirigami.FormData.label: i18n("Maximum width:")
+            Kirigami.FormData.label: i18n("Width:")
             from: 80
             to: 2000
             stepSize: 10

@@ -23,15 +23,14 @@ Item {
 
     readonly property real coverSize: vertical ? width : height
     readonly property real spacing: Kirigami.Units.smallSpacing * 2
-    readonly property real maxTextWidth: Math.max(0, Plasmoid.configuration.maximumWidth - coverSize - spacing)
-    readonly property real wantedTextWidth: Math.max(titleLabel.implicitWidth, artistLabel.visible ? artistLabel.implicitWidth : 0)
-    readonly property real textWidth: Math.min(maxTextWidth, Math.max(Kirigami.Units.gridUnit * 3, wantedTextWidth))
+    readonly property int fixedWidth: Plasmoid.configuration.widgetWidth
+    readonly property real textWidth: Math.max(0, fixedWidth - coverSize - spacing)
 
     Layout.fillHeight: !vertical
     Layout.fillWidth: vertical
-    Layout.minimumWidth: vertical ? -1 : coverSize + spacing + Math.min(maxTextWidth, Kirigami.Units.gridUnit * 3)
-    Layout.preferredWidth: vertical ? -1 : coverSize + spacing + textWidth
-    Layout.maximumWidth: vertical ? -1 : Plasmoid.configuration.maximumWidth
+    Layout.minimumWidth: vertical ? -1 : fixedWidth
+    Layout.preferredWidth: vertical ? -1 : fixedWidth
+    Layout.maximumWidth: vertical ? -1 : fixedWidth
     Layout.preferredHeight: vertical ? width : -1
     Layout.maximumHeight: vertical ? width : -1
 
@@ -69,6 +68,33 @@ Item {
             visible: art.status !== Image.Ready
             source: view.backend.playerIcon || "media-album-cover"
             color: view.textColor
+        }
+
+        // Playback state badge (playing / paused)
+        Rectangle {
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                margins: Math.round(parent.width * 0.06)
+            }
+            width: Math.max(12, Math.round(parent.width * 0.4))
+            height: width
+            radius: width / 2
+            color: Qt.rgba(0, 0, 0, 0.6)
+            opacity: view.backend.isPlaying || view.backend.isPaused ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation { duration: Kirigami.Units.shortDuration }
+            }
+
+            Kirigami.Icon {
+                anchors.centerIn: parent
+                width: Math.round(parent.width * 0.6)
+                height: width
+                isMask: true
+                color: "white"
+                source: view.backend.isPlaying ? "media-playback-start-symbolic"
+                                               : "media-playback-pause-symbolic"
+            }
         }
     }
 
