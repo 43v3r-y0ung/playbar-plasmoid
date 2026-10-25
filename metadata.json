@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "75790723+43v3r-y0ung@users.noreply.github.com",
+                "Name": "aeou"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "Compact now-playing panel widget (MPRIS): cover, track, artist, progress",
+        "Description[uk]": "Компактний віджет «зараз грає» для панелі (MPRIS): обкладинка, трек, виконавець, прогрес",
+        "Icon": "media-playback-start",
+        "Id": "org.aeou.playbar",
+        "License": "GPL-2.0-or-later",
+        "Name": "Playbar",
+        "Version": "1.0.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
