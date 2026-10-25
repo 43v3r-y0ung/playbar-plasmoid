@@ -35,13 +35,6 @@ kpackagetool6 -t Plasma/Applet -i .
 Далі: правий клік на панелі → «Додати віджети…» → знайдіть **Playbar** і
 перетягніть на панель.
 
-Або завантажте готовий `playbar.plasmoid` з
-[KDE Store](https://store.kde.org/) і встановіть його:
-
-```sh
-kpackagetool6 -t Plasma/Applet -i playbar.plasmoid
-```
-
 ### Оновлення
 
 ```sh
@@ -100,6 +93,12 @@ contents/ui/configGeneral.qml   сторінка «Загальне»
 
 ```sh
 git archive --format=zip -o playbar.plasmoid HEAD metadata.json contents LICENSE
+```
+
+Встановлення зібраного файла:
+
+```sh
+kpackagetool6 -t Plasma/Applet -i playbar.plasmoid
 ```
 
 ## Ліцензія
