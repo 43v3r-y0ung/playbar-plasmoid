@@ -12,6 +12,10 @@
     <entry name="accentColor" type="Color">
       <default>#73BA25</default>
     </entry>
+    <!-- Take the progress bar color from the album cover, accentColor is the fallback -->
+    <entry name="accentFromCover" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="useThemeColors" type="Bool">
       <default>true</default>
     </entry>

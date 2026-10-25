@@ -18,6 +18,8 @@ KCM.SimpleKCM {
     property int cfg_textLayoutDefault
     property alias cfg_accentColor: accentButton.color
     property color cfg_accentColorDefault
+    property alias cfg_accentFromCover: accentFromCoverCheck.checked
+    property bool cfg_accentFromCoverDefault
     property alias cfg_useThemeColors: themeColorsCheck.checked
     property bool cfg_useThemeColorsDefault
     property alias cfg_textColor: textColorButton.color
@@ -129,6 +131,11 @@ KCM.SimpleKCM {
                 QQC2.ToolTip.visible: hovered
                 QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
             }
+        }
+
+        QQC2.CheckBox {
+            id: accentFromCoverCheck
+            text: i18n("Take from album cover (when possible)")
         }
 
         QQC2.CheckBox {
