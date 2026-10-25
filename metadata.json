@@ -14,7 +14,8 @@
         "Id": "org.aeou.playbar",
         "License": "GPL-2.0-or-later",
         "Name": "Playbar",
-        "Version": "1.0.0"
+        "Version": "1.0.0",
+        "Website": "https://github.com/43v3r-y0ung/playbar-plasmoid"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

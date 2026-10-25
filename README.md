@@ -25,8 +25,8 @@
 ## Встановлення
 
 ```sh
-git clone <url> Playbar_plasmoid
-cd Playbar_plasmoid
+git clone https://github.com/43v3r-y0ung/playbar-plasmoid.git
+cd playbar-plasmoid
 kpackagetool6 -t Plasma/Applet -i .
 ```
 
