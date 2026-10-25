@@ -234,32 +234,105 @@ Item {
                 height: view.spacing / 2
             }
 
-            // Thin progress bar under the text
-            Rectangle {
+            // Thin progress bar under the text; click or drag to seek.
+            // The slot keeps a fixed height so the text does not move when the bar grows on hover.
+            Item {
+                id: barSlot
                 width: parent.width
                 height: view.barHeight
-                radius: height / 2
-                color: Qt.alpha(view.textColor, 0.2)
                 opacity: view.backend.length > 0 ? 1 : 0
 
+                readonly property bool interactive: view.backend.canSeek && view.backend.length > 0
+                readonly property bool active: interactive && (seekArea.containsMouse || seekArea.pressed)
+                readonly property real progress: seekArea.pressed
+                    ? seekArea.dragProgress
+                    : Math.max(0, Math.min(1, view.backend.position / view.backend.length))
+
                 Rectangle {
+                    id: track
                     anchors {
                         left: parent.left
-                        top: parent.top
-                        bottom: parent.bottom
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
                     }
-                    width: parent.width * Math.max(0, Math.min(1, view.backend.position / view.backend.length))
-                    radius: parent.radius
+                    height: barSlot.active ? view.barHeight * 2 : view.barHeight
+                    radius: height / 2
+                    color: Qt.alpha(view.textColor, 0.2)
+
+                    Behavior on height {
+                        NumberAnimation { duration: Kirigami.Units.shortDuration }
+                    }
+
+                    Rectangle {
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
+                        width: parent.width * barSlot.progress
+                        radius: parent.radius
+                        color: view.accentColor
+
+                        Behavior on color {
+                            ColorAnimation { duration: Kirigami.Units.longDuration }
+                        }
+
+                        Behavior on width {
+                            enabled: view.backend.isPlaying && !seekArea.pressed
+                            NumberAnimation { duration: 500; easing.type: Easing.Linear }
+                        }
+                    }
+                }
+
+                // Handle
+                Rectangle {
+                    x: track.width * barSlot.progress - width / 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: view.barHeight * 4
+                    height: width
+                    radius: width / 2
                     color: view.accentColor
+                    border.width: 1
+                    border.color: Qt.alpha("black", 0.3)
+                    opacity: barSlot.active ? 1 : 0
+                    scale: barSlot.active ? 1 : 0.5
 
-                    Behavior on color {
-                        ColorAnimation { duration: Kirigami.Units.longDuration }
+                    Behavior on opacity {
+                        NumberAnimation { duration: Kirigami.Units.shortDuration }
                     }
+                    Behavior on scale {
+                        NumberAnimation { duration: Kirigami.Units.shortDuration }
+                    }
+                }
 
-                    Behavior on width {
-                        enabled: view.backend.isPlaying
-                        NumberAnimation { duration: 500; easing.type: Easing.Linear }
+                MouseArea {
+                    id: seekArea
+                    // Bigger hit area than the thin bar itself
+                    anchors {
+                        fill: parent
+                        topMargin: -view.spacing
+                        bottomMargin: -view.spacing
                     }
+                    enabled: barSlot.interactive
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    preventStealing: true
+
+                    property real dragProgress: 0
+                    readonly property real hoverProgress: Math.max(0, Math.min(1, mouseX / width))
+
+                    onPressed: mouse => dragProgress = hoverProgress
+                    onPositionChanged: mouse => {
+                        if (pressed) {
+                            dragProgress = hoverProgress;
+                        }
+                    }
+                    onReleased: mouse => view.backend.seek(dragProgress * view.backend.length)
+
+                    // Show the target time in the widget tooltip while hovering the bar
+                    onContainsMouseChanged: view.backend.seekPreview = containsMouse ? hoverProgress : -1
+                    onHoverProgressChanged: if (containsMouse || pressed) view.backend.seekPreview = hoverProgress
+                    onPressedChanged: if (!pressed && !containsMouse) view.backend.seekPreview = -1
                 }
             }
         }

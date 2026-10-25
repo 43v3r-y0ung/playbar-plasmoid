@@ -68,6 +68,7 @@ PlasmoidItem {
     readonly property bool isPaused: playbackStatus === Mpris.PlaybackStatus.Paused
     readonly property real rate: player?.rate ?? 1
     readonly property real length: player?.length ?? 0 // microseconds
+    readonly property bool canSeek: player?.canSeek ?? false
     // END model properties
 
     // Players only report position on seek / on request, so we extrapolate locally
@@ -80,6 +81,24 @@ PlasmoidItem {
         } else {
             root.position = 0;
         }
+    }
+
+    function seek(target: real): void {
+        if (root.player && root.canSeek) {
+            root.player.position = target;
+            root.position = target;
+        }
+    }
+
+    // 0..1 while the mouse is over the progress bar, -1 otherwise
+    property real seekPreview: -1
+
+    function formatTime(us: real): string {
+        const total = Math.max(0, Math.floor(us / 1000000));
+        const h = Math.floor(total / 3600);
+        const m = Math.floor(total / 60) % 60;
+        const s = String(total % 60).padStart(2, "0");
+        return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`;
     }
 
     onPlayerChanged: syncPosition()
@@ -135,8 +154,13 @@ PlasmoidItem {
 
     Plasmoid.icon: "media-playback-start"
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
-    toolTipMainText: track || i18n("No media playing")
+    toolTipMainText: seekPreview >= 0
+        ? i18nc("@info:tooltip seek target / track length", "%1 / %2", formatTime(seekPreview * length), formatTime(length))
+        : track || i18n("No media playing")
     toolTipSubText: {
+        if (seekPreview >= 0) {
+            return i18n("Click to seek");
+        }
         const lines = [];
         if (artist) lines.push(artist);
         if (album) lines.push(album);
