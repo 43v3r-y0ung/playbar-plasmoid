@@ -108,6 +108,38 @@ Item {
         source: art
     }
 
+    // BEGIN playback time
+    readonly property bool showTime: backend.length > 0
+    // While hovering / dragging the seek bar, show the target time instead
+    readonly property real shownTime: backend.seekPreview >= 0 ? backend.seekPreview * backend.length
+                                                               : backend.position
+    readonly property real timeWidth: Math.ceil(timeMetrics.advanceWidth)
+
+    // Width of the longest possible string, so the text next to it does not jump
+    TextMetrics {
+        id: timeMetrics
+        font.pixelSize: view.fontPixelSize
+        font.features: { "tnum": 1 }
+        text: view.backend.formatTime(view.backend.length) + " / " + view.backend.formatTime(view.backend.length)
+    }
+
+    component TimeText: Text {
+        anchors {
+            right: parent.right
+            verticalCenter: parent.verticalCenter
+        }
+        width: view.timeWidth
+        horizontalAlignment: Text.AlignRight
+        text: view.backend.formatTime(view.shownTime) + " / " + view.backend.formatTime(view.backend.length)
+        textFormat: Text.PlainText
+        color: view.textColor
+        opacity: 0.75
+        font.pixelSize: view.fontPixelSize
+        font.features: { "tnum": 1 }
+        renderType: Text.NativeRendering
+    }
+    // END playback time
+
     readonly property real coverSize: vertical ? width : height
     readonly property real spacing: Kirigami.Units.smallSpacing * 2
     readonly property int fixedWidth: Plasmoid.configuration.widgetWidth
@@ -205,28 +237,58 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
 
-            ScrollingText {
-                id: titleLabel
+            // The line right above the bar (artist, or "Artist — Title" in one-line mode)
+            // carries the playback time on its right edge
+            Item {
                 width: parent.width
-                text: view.twoLines || !view.shownArtist
-                    ? view.shownTrack
-                    : i18nc("@label artist — title", "%1 — %2", view.shownArtist, view.shownTrack)
-                color: view.textColor
-                font.pixelSize: view.fontPixelSize
-                font.weight: view.twoLines ? Font.DemiBold : Font.Normal
-                opacity: view.contentOpacity
-                running: view.backend.isPlaying
+                height: titleLabel.implicitHeight
+
+                ScrollingText {
+                    id: titleLabel
+                    anchors {
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    width: parent.width - (titleTime.visible ? view.timeWidth + view.spacing : 0)
+                    text: view.twoLines || !view.shownArtist
+                        ? view.shownTrack
+                        : i18nc("@label artist — title", "%1 — %2", view.shownArtist, view.shownTrack)
+                    color: view.textColor
+                    font.pixelSize: view.fontPixelSize
+                    font.weight: view.twoLines ? Font.DemiBold : Font.Normal
+                    opacity: view.contentOpacity
+                    running: view.backend.isPlaying
+                }
+
+                TimeText {
+                    id: titleTime
+                    visible: !view.twoLines && view.showTime
+                }
             }
 
-            ScrollingText {
-                id: artistLabel
+            Item {
                 width: parent.width
-                visible: view.twoLines && text !== ""
-                text: view.shownArtist
-                color: view.textColor
-                opacity: 0.75 * view.contentOpacity
-                font.pixelSize: view.fontPixelSize
-                running: view.backend.isPlaying
+                height: artistLabel.implicitHeight
+                visible: view.twoLines && (artistLabel.text !== "" || view.showTime)
+
+                ScrollingText {
+                    id: artistLabel
+                    anchors {
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    width: parent.width - (artistTime.visible ? view.timeWidth + view.spacing : 0)
+                    text: view.shownArtist
+                    color: view.textColor
+                    opacity: 0.75 * view.contentOpacity
+                    font.pixelSize: view.fontPixelSize
+                    running: view.backend.isPlaying
+                }
+
+                TimeText {
+                    id: artistTime
+                    visible: view.twoLines && view.showTime
+                }
             }
 
             Item {
