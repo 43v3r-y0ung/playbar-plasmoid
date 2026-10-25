@@ -1,32 +1,32 @@
 # Playbar
 
-Компактний віджет «зараз грає» для панелі KDE Plasma 6. Без кнопок керування
-і без спливного вікна — лише перемотування кліком по прогрес-бару
-і пауза середнім кліком.
+A compact "now playing" widget for the KDE Plasma 6 panel. No control buttons
+and no popup — just click-to-seek on the progress bar and middle-click to
+pause.
 
-![Playbar на панелі](docs/screenshot.png)
+![Playbar in the panel](docs/screenshot.png)
 
-- обкладинка альбому (квадрат на висоту панелі)
-- назва треку і виконавець — два рядки або один рядок «Виконавець — Назва»;
-  довгий текст плавно прокручується
-- час відтворення (`1:23 / 8:06`) праворуч у рядку над баром
-- тонкий прогрес-бар під текстом; клік або перетягування по ньому перемотує трек
-  (якщо плеєр це підтримує), при наведенні підказка показує час
-- значок стану (грає / пауза) у куті обкладинки
-- середній клік по віджету — пауза / відтворення
-- плавна зміна треку: обкладинка й текст згасають і з'являються знову
-- колір прогрес-бару може братися з обкладинки альбому
-- фіксована ширина в панелі (налаштовується)
-- коли нічого не грає — віджет ховається з панелі
-  (у режимі редагування панелі він видимий, щоб його можна було перемістити)
-- підказка при наведенні: трек, виконавець, альбом, плеєр
+- album cover (a square as tall as the panel)
+- track title and artist — two lines, or a single "Artist — Title" line;
+  long text scrolls smoothly
+- playback time (`1:23 / 8:06`) on the right of the line above the bar
+- a thin progress bar under the text; click or drag on it to seek
+  (if the player supports it), with a tooltip showing the time on hover
+- a playback state icon (playing / paused) in the corner of the cover
+- middle-click on the widget toggles play / pause
+- smooth track changes: the cover and text fade out and back in
+- the progress bar color can be taken from the album cover
+- fixed width in the panel (configurable)
+- hides itself from the panel when nothing is playing
+  (it stays visible in panel edit mode so you can move it)
+- hover tooltip: track, artist, album, player
 
-Дані береться через MPRIS (модуль `org.kde.plasma.private.mpris`, той самий,
-що й у вбудованого віджета «Медіаплеєр»), тож працює зі Strawberry та
-будь-яким іншим MPRIS-сумісним плеєром. Зовнішніх залежностей немає — лише
-те, що вже входить у Plasma 6.
+Data comes from MPRIS (the `org.kde.plasma.private.mpris` module, the same one
+the built-in "Media Player" widget uses), so it works with Strawberry and any
+other MPRIS-compatible player. No external dependencies — only what already
+ships with Plasma 6.
 
-## Встановлення
+## Installation
 
 ```sh
 git clone https://github.com/43v3r-y0ung/playbar-plasmoid.git
@@ -34,75 +34,75 @@ cd playbar-plasmoid
 kpackagetool6 -t Plasma/Applet -i .
 ```
 
-Далі: правий клік на панелі → «Додати віджети…» → знайдіть **Playbar** і
-перетягніть на панель.
+Then: right-click the panel → "Add Widgets…" → find **Playbar** and drag it
+onto the panel.
 
-### Оновлення
+### Updating
 
 ```sh
 kpackagetool6 -t Plasma/Applet -u .
-plasmashell --replace &   # або вийти з сеансу й увійти знову
+plasmashell --replace &   # or log out and back in
 ```
 
-### Видалення
+### Removing
 
 ```sh
 kpackagetool6 -t Plasma/Applet -r org.aeou.playbar
 ```
 
-## Тестування без панелі
+## Testing without a panel
 
-`plasmoidviewer` входить до пакета `plasma6-sdk`:
+`plasmoidviewer` is part of the `plasma6-sdk` package:
 
 ```sh
 sudo zypper in plasma6-sdk
 plasmoidviewer -a org.aeou.playbar -f horizontal -s 400x44
 ```
 
-Помилки QML виводяться в термінал.
+QML errors are printed to the terminal.
 
-## Налаштування
+## Settings
 
-| Параметр | За замовчуванням |
+| Setting | Default |
 |---|---|
-| Текст: два рядки / один рядок «Виконавець — Назва» | два рядки |
-| Колір акценту (прогрес-бар) | `#73BA25` (зелений openSUSE) |
-| Брати колір акценту з обкладинки (заданий колір — запасний) | так |
-| Колір тексту / «Кольори теми Plasma» | кольори теми |
-| Плеєр: активний (автоматично) або конкретний | активний |
-| Ховати на паузі | ні |
-| Ширина в панелі (фіксована) | 350 px |
+| Text: two lines / one "Artist — Title" line | two lines |
+| Accent color (progress bar) | `#73BA25` (openSUSE green) |
+| Take the accent color from the album cover (the set color is the fallback) | yes |
+| Text color / "Use Plasma theme colors" | theme colors |
+| Player: active (automatic) or a specific one | active |
+| Hide when paused | no |
+| Width in the panel (fixed) | 350 px |
 
-Конкретний плеєр запам'ятовується за його desktop-entry (наприклад,
-`org.strawberrymusicplayer.strawberry`), тож вибір зберігається після
-перезапуску плеєра. Якщо вибраний плеєр не запущено, віджет прихований.
+A specific player is remembered by its desktop entry (for example,
+`org.strawberrymusicplayer.strawberry`), so the choice survives a player
+restart. If the selected player isn't running, the widget is hidden.
 
-## Структура
+## Structure
 
 ```
 metadata.json
-contents/config/main.xml        схема налаштувань
-contents/config/config.qml      сторінки налаштувань
-contents/ui/main.qml            вибір плеєра, позиція, видимість
-contents/ui/NowPlaying.qml      вигляд у панелі
-contents/ui/ScrollingText.qml   рядок із прокручуванням
-contents/ui/configGeneral.qml   сторінка «Загальне»
+contents/config/main.xml        settings schema
+contents/config/config.qml      settings pages
+contents/ui/main.qml            player selection, position, visibility
+contents/ui/NowPlaying.qml      panel view
+contents/ui/ScrollingText.qml   scrolling text line
+contents/ui/configGeneral.qml   "General" page
 ```
 
-## Збирання `.plasmoid`
+## Building a `.plasmoid`
 
-`.plasmoid` — це zip-архів пакета:
+A `.plasmoid` is a zip archive of the package:
 
 ```sh
 git archive --format=zip -o playbar.plasmoid HEAD metadata.json contents LICENSE
 ```
 
-Встановлення зібраного файла:
+Installing the built file:
 
 ```sh
 kpackagetool6 -t Plasma/Applet -i playbar.plasmoid
 ```
 
-## Ліцензія
+## License
 
-GPL-2.0-or-later, див. [LICENSE](LICENSE).
+GPL-2.0-or-later, see [LICENSE](LICENSE).
